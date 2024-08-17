@@ -1,31 +1,47 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
+  imports = 
+    [
       ./hardware-configuration.nix
-      <home-manager/nixos>
+      inputs.home-manager.nixosModules.default
     ];
 
+
+  nix = {
+    settings.experimental-features = ["nix-command" "flakes"];
+  };
+
   # Bootloader.
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot";
-  boot.loader.grub.theme = "${
-    pkgs.fetchFromGitHub {
-    owner = "Blaysht";
-    repo = "grub_bios_theme";
-    rev = "035554c30df6a10158a5a71acfbc4975045fc7ac";
-    hash = "sha256-kYcEMCV9ipwPGgfAwOtFgYO4eHZxkUS97tOr0ft4rUE=";
-  }}/OldBIOS";
+  boot = {
+
+    kernelPackages = pkgs.linuxPackages_latest;
+    cleanTmpDir = true;
+
+    loader = {
+      systemd-boot.enable = false;
+
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+
+      grub = {
+        enable = true;
+        device = "nodev";
+        useOSProber = true;
+        efiSupport = true;
+        theme = "${
+          pkgs.fetchFromGitHub {
+          owner = "Blaysht";
+          repo = "grub_bios_theme";
+          rev = "035554c30df6a10158a5a71acfbc4975045fc7ac";
+          hash = "sha256-kYcEMCV9ipwPGgfAwOtFgYO4eHZxkUS97tOr0ft4rUE=";
+        }}/OldBIOS";
+
+      };
+    };
+  };
 
   # Enable OpenGL
   hardware.opengl = {
@@ -111,6 +127,7 @@
   # programs.hyprland = {
   #   # Install the packages from nixpkgs
   #   enable = true;
+  #   package=inputs.hyprland.packages."${pkgs.system}".hyprland;
   #   # Whether to enable XWayland
   #   xwayland.enable = true;
   # };
@@ -154,13 +171,12 @@
     ];
   };
 
-  # home-manager.users.bailey = { pkgs, ... }: {
-  #   # wayland.windowManager.hyprland.settings = {
-  #   #   "$mod" = "SUPER";
-  #   # };
-
-  #   home.stateVersion = "24.11";
-  # };
+  home-manager = {
+    extraSpecialArgs = { inherit inputs; };
+    users = {
+      "bailey" = import ./home.nix;
+    };
+  };
 
   # Install firefox.
   programs.firefox.enable = false;
@@ -180,45 +196,45 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-    pkgs.git
-    pkgs.nanorc
-    pkgs.stow
-    pkgs.fzf
-    pkgs.zoxide
-    pkgs.vscode
-    pkgs.zettlr
-    pkgs.texliveFull
-    pkgs.firefox-devedition
-    pkgs.kitty
-    pkgs.obsidian
-    pkgs.vlc
-    pkgs.zotero_7
-    pkgs.spotify
-    pkgs.inkscape
-    pkgs.gimp
-    pkgs.bitwarden
-    pkgs.upscayl
-    pkgs.discord
-    pkgs.tailscale
-    pkgs.libreoffice-fresh
-    pkgs.gh
-    pkgs.papirus-icon-theme
-    pkgs.google-chrome
-    pkgs.jdk
-    pkgs.rustup
-    pkgs.ltex-ls
-    pkgs.gnome.nautilus
-    pkgs.gnome.geary
-    pkgs.gnome.gnome-calendar
-    pkgs.gnome-connections
-    pkgs.gnome.simple-scan
-    pkgs.gnome-extensions-cli
-    pkgs.gnome-extension-manager
-    pkgs.gnome.gnome-font-viewer
-    pkgs.gnome.gnome-boxes 
-    pkgs.gnome.ghex
-    pkgs.gnome.eog
-    pkgs.gnome.gnome-tweaks
+    git
+    nanorc
+    stow
+    fzf
+    zoxide
+    vscode
+    zettlr
+    texliveFull
+    firefox-devedition
+    kitty
+    obsidian
+    vlc
+    zotero_7
+    spotify
+    inkscape
+    gimp
+    bitwarden
+    upscayl
+    discord
+    tailscale
+    libreoffice-fresh
+    gh
+    papirus-icon-theme
+    google-chrome
+    jdk
+    rustup
+    ltex-ls
+    gnome.nautilus
+    gnome.geary
+    gnome.gnome-calendar
+    gnome-connections
+    gnome.simple-scan
+    gnome-extensions-cli
+    gnome-extension-manager
+    gnome.gnome-font-viewer
+    gnome.gnome-boxes 
+    gnome.ghex
+    gnome.eog
+    gnome.gnome-tweaks
     
     
     gnomeExtensions.dash-to-dock
