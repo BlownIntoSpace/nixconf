@@ -16,7 +16,7 @@
   boot = {
 
     kernelPackages = pkgs.linuxPackages_latest;
-    cleanTmpDir = true;
+    tmp.cleanOnBoot = true;
 
     loader = {
       systemd-boot.enable = false;
@@ -43,8 +43,7 @@
     };
   };
 
-  # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
   };
 
