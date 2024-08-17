@@ -119,18 +119,12 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable=true;
+    # displayManager.gdm.enable = true;
+    # desktopManager.gnome.enable=true;
   };
 
-    
-  # programs.hyprland = {
-  #   # Install the packages from nixpkgs
-  #   enable = true;
-  #   package=inputs.hyprland.packages."${pkgs.system}".hyprland;
-  #   # Whether to enable XWayland
-  #   xwayland.enable = true;
-  # };
+  services.displayManager.cosmic-greeter.enable = true;
+  services.desktopManager.cosmic.enable = true;
 
 
   # Configure keymap in X11
@@ -222,23 +216,23 @@
     google-chrome
     jdk
     rustup
-    ltex-ls
-    gnome.nautilus
-    gnome.geary
-    gnome.gnome-calendar
-    gnome-connections
-    gnome.simple-scan
-    gnome-extensions-cli
-    gnome-extension-manager
-    gnome.gnome-font-viewer
-    gnome.gnome-boxes 
-    gnome.ghex
-    gnome.eog
-    gnome.gnome-tweaks
+    # ltex-ls
+    # gnome.nautilus
+    # gnome.geary
+    # gnome.gnome-calendar
+    # gnome-connections
+    # gnome.simple-scan
+    # gnome-extensions-cli
+    # gnome-extension-manager
+    # gnome.gnome-font-viewer
+    # gnome.gnome-boxes 
+    # gnome.ghex
+    # gnome.eog
+    # gnome.gnome-tweaks
     
     
-    gnomeExtensions.dash-to-dock
-    gnomeExtensions.appindicator
+    # gnomeExtensions.dash-to-dock
+    # gnomeExtensions.appindicator
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
