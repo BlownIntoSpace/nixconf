@@ -7,12 +7,19 @@
       inputs.home-manager.nixosModules.default
     ];
 
+  # * ============ *
+  # * Nix Settings *
+  # * ============ *
 
   nix = {
     settings.experimental-features = ["nix-command" "flakes"];
   };
 
-  # Bootloader.
+
+  # * ========== *
+  # * Bootloader *
+  # * ========== *
+
   boot = {
 
     kernelPackages = pkgs.linuxPackages_latest;
@@ -43,6 +50,12 @@
     };
   };
 
+
+  # * ======== *
+  # * Graphics *
+  # * ======== *
+
+  # Enable Graphics
   hardware.graphics = {
     enable = true;
   };
@@ -55,14 +68,14 @@
     # Modesetting is required.
     modesetting.enable = true;
 
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
-    # of just the bare essentials.
-    powerManagement.enable = true;
+    # Nvidia power management.
+    # Enable this if you have graphical corruption issues or application crashes after waking up from sleep. 
+    # This fixes it by saving the entire VRAM memory to /tmp/ instead of just the bare essentials.
+    # ! Experimental, and can cause sleep/suspend to fail.
+    powerManagement.enable = false;
 
     # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    # ! Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
 
     # Use the NVidia open source kernel module (not to be confused with the
@@ -75,7 +88,7 @@
     open = false;
 
     # Enable the Nvidia settings menu,
-	# accessible via `nvidia-settings`.
+	  # accessible via `nvidia-settings`.
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
@@ -83,19 +96,24 @@
   };
 
 
+  # * ========== *
+  # * Networking *
+  # * ========== *
+
+  # Set up networking
   networking.hostName = "brick"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
 
   # Enable networking
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;
 
   # Enable Tailscale
   services.tailscale.enable = true;
+
+
+  # * ====== *
+  # * Locale *
+  # * ====== *
   
   # Set your time zone.
   time.timeZone = "Pacific/Auckland";
@@ -115,25 +133,42 @@
     LC_TIME = "en_NZ.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver = {
+
+
+  # * ============== *
+  # * Window Manager *
+  # * ============== *
+
+  # # Enable the X11 windowing system.
+  # services.xserver = {
+  #   enable = true;
+  #   # Enable touchpad support (enabled default in most desktopManager).
+  #   # libinput.enable = true;
+
+  #   # Configure keymap in X11
+  #   xkb = {
+  #     layout = "us";
+  #     variant = "";
+  #   };
+  # };
+
+  services.displayManager.sddm = {
     enable = true;
-    # displayManager.gdm.enable = true;
-    # desktopManager.gnome.enable=true;
+    wayland.enable = true;
+  };
+  
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
+
+  programs.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   };
 
-  services.displayManager.cosmic-greeter.enable = true;
-  services.desktopManager.cosmic.enable = true;
 
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # * ===== *
+  # * Audio *
+  # * ===== *
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
@@ -151,8 +186,9 @@
     #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  # * ================== *
+  # * User Configuration *
+  # * ================== *
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.bailey = {
@@ -171,6 +207,10 @@
     };
   };
 
+  # * =============== *
+  # * System Packages *
+  # * =============== *
+
   # Install firefox.
   programs.firefox.enable = false;
 
@@ -187,51 +227,48 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    # stuff i'll need at a later date so might as well put up the top
     git
-    nanorc
+    kitty
+    tailscale
+    gh
+    vscode
+    texliveFull
     stow
     fzf
     zoxide
-    vscode
-    zettlr
-    texliveFull
+    nanorc
+
+    # eh i'll probably need to program on this
+    rustup
+    jdk
+
+    # "because blue is cool"
     firefox-devedition
-    kitty
+    bitwarden
+    
+    # nerd notes
     obsidian
-    vlc
     zotero_7
+    libreoffice-fresh
+
+    # so i dont die inside
     spotify
+    vlc
+
+    # arty farty
     inkscape
     gimp
-    bitwarden
     upscayl
+    
+    # i have friends ok
     discord
-    tailscale
-    libreoffice-fresh
-    gh
+
+    # why are icons always ugly
     papirus-icon-theme
+
+    # it's at the bottom for a reason
     google-chrome
-    jdk
-    rustup
-    # ltex-ls
-    # gnome.nautilus
-    # gnome.geary
-    # gnome.gnome-calendar
-    # gnome-connections
-    # gnome.simple-scan
-    # gnome-extensions-cli
-    # gnome-extension-manager
-    # gnome.gnome-font-viewer
-    # gnome.gnome-boxes 
-    # gnome.ghex
-    # gnome.eog
-    # gnome.gnome-tweaks
-    
-    
-    # gnomeExtensions.dash-to-dock
-    # gnomeExtensions.appindicator
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -242,10 +279,18 @@
   #   enableSSHSupport = true;
   # };
 
+  # * ======== *
+  # * Services *
+  # * ======== *
   # List services that you want to enable:
+
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
+
+
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -253,12 +298,13 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
-
+  # ! DO NOT CHANGE THIS FROM `24.05`
+  system.stateVersion = "24.05";
 }

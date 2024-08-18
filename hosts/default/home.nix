@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -6,17 +6,31 @@
   home.username = "bailey";
   home.homeDirectory = "/home/bailey";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
+  home.stateVersion = "24.05"; #! Do not change without reading home-manager documentation
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
+  wayland.windowManager.hyprland = {
+    enable = true;
+
+    plugins = [
+      inputs.hyprland-plugins.packages."${pkgs.system}".borders-plus-plus
+    ];
+
+    settings = {
+
+     # "plugin:borders-plus-plus" = {
+     #   add_borders = 1;
+
+     #   "col.border_1" = "rgb(ffffff)";
+     #   "col.border_2" = "rgb(2222ff)";
+
+     #   border_size_1 = 10;
+     #   border_size_2 = -1;
+
+     #   natural_rounding = "yes";
+     # };
+    };
+  };
+
   home.packages = [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -34,6 +48,9 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    pkgs.waybar
+    pkgs.hyprcursor
+
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
