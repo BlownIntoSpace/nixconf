@@ -118,11 +118,12 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
-    # displayManager.gdm.enable = true;
-    # desktopManager.gnome.enable=true;
+    displayManager.gdm.enable = true;
   };
+  
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.gdm-password.enableGnomeKeyring = true;
 
-  services.displayManager.cosmic-greeter.enable = true;
   services.desktopManager.cosmic.enable = true;
 
 
