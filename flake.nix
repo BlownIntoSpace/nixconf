@@ -9,14 +9,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    nixos-cosmic = {
-      url = "github:lilyinstarlight/nixos-cosmic";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
   };
 
-  outputs = { self, nixpkgs, nixos-cosmic, ... }@inputs: 
+  outputs = { self, nixpkgs, ... }@inputs: 
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -27,14 +22,7 @@
         default = nixpkgs.lib.nixosSystem {
           specialArgs = {inherit inputs;};
           modules = [
-          {
-            nix.settings = {
-              substituters = [ "https://cosmic.cachix.org/" ];
-              trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
-            };
-          }
-          nixos-cosmic.nixosModules.default
-          
+                    
           ./hosts/default/configuration.nix
           inputs.home-manager.nixosModules.default
         ];
